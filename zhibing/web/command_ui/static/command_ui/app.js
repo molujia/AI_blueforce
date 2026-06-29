@@ -1,5 +1,21 @@
-const origin = { lat: 40.2409585, lon: 116.1173974 };
-const map = L.map("map", { zoomControl: true, attributionControl: false }).setView([origin.lat, origin.lon], 16);
+const origin = { lat: 25.044, lon: 121.523 };
+const TILE_BOUNDS = [[25.000, 121.470], [25.088, 121.576]];
+const map = L.map("map", {
+  zoomControl: true,
+  attributionControl: false,
+  maxBounds: TILE_BOUNDS,
+  maxBoundsViscosity: 0.8,
+}).setView([origin.lat, origin.lon], 15);
+
+// 卫星瓦片底图（本地 tile 目录）
+const tileLayer = L.tileLayer("/tiles/{z}/{x}/{y}.png", {
+  minZoom: 12,
+  maxZoom: 18,
+  maxNativeZoom: 18,
+  tms: false,
+  noWrap: true,
+}).addTo(map);
+
 const layers = {
   base: L.layerGroup().addTo(map),
   scenario: L.layerGroup().addTo(map),
@@ -33,16 +49,10 @@ function bindEvents() {
 }
 
 async function loadBaseMap() {
-  const [roads, buildings, water, landhouse] = await Promise.all([
-    fetch("/static/command_ui/map/roads.geojson").then(r => r.json()).catch(() => null),
-    fetch("/static/command_ui/map/buildings.geojson").then(r => r.json()).catch(() => null),
-    fetch("/static/command_ui/map/water.geojson").then(r => r.json()).catch(() => null),
-    fetch("/static/command_ui/map/landhouse.geojson").then(r => r.json()).catch(() => null),
-  ]);
-  if (landhouse) L.geoJSON(landhouse, { style: { color: "#20355f", weight: 1, fillColor: "#172044", fillOpacity: 0.35 } }).addTo(layers.base);
+  // 仅加载水体覆盖层（223KB），建筑(17MB)/道路(12MB)/地块(2.4MB)过于庞大导致 SVG 渲染卡顿
+  // 卫星瓦片底图已包含所有地形细节，无需重复绘制矢量图层
+  const water = await fetch("/static/command_ui/map/water.geojson").then(r => r.json()).catch(() => null);
   if (water) L.geoJSON(water, { style: { color: "#155e75", weight: 1, fillColor: "#0e7490", fillOpacity: 0.28 } }).addTo(layers.base);
-  if (roads) L.geoJSON(roads, { style: { color: "#7486a6", weight: 1.2, opacity: 0.72 } }).addTo(layers.base);
-  if (buildings) L.geoJSON(buildings, { style: { color: "#94a3b8", weight: 0.8, fillColor: "#334155", fillOpacity: 0.5 } }).addTo(layers.base);
 }
 
 async function loadDemoScene() {

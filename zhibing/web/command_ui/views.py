@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 from typing import Any
 
-from django.http import JsonResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
@@ -19,10 +20,19 @@ from zhibing.visualization.projector import build_demo_projection, build_project
 SYSTEM = ZhibingDecisionSystem()
 MEMORY = SessionMemory()
 SCENARIO_ID = "demo_encirclement_v0"
+_TILE_DIR = Path(__file__).resolve().parents[1] / "zhibing_web" / "tile"
 
 
 def index(request: Any):
     return render(request, "command_ui/index.html")
+
+
+def serve_tile(request: Any, z: int, x: int, y: int):
+    tile_path = _TILE_DIR / str(z) / str(x) / f"{y}.png"
+    if not tile_path.is_file():
+        raise Http404("Tile not found")
+    with open(tile_path, "rb") as f:
+        return HttpResponse(f.read(), content_type="image/png")
 
 
 @csrf_exempt
