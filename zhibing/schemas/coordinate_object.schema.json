@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "coordinate_object.schema.json",
+  "title": "CoordinateObject",
+  "oneOf": [
+    {
+      "type": "object",
+      "required": ["frame", "lat", "lon", "alt"],
+      "properties": {
+        "frame": {"const": "WGS84_LATLON_ALT"},
+        "lat": {"type": "number"},
+        "lon": {"type": "number"},
+        "alt": {"type": "number"}
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": ["frame", "x", "y", "z"],
+      "properties": {
+        "frame": {"const": "VBS_LOCAL_XYZ"},
+        "x": {"type": "number"},
+        "y": {"type": "number"},
+        "z": {"type": "number"}
+      },
+      "additionalProperties": false
+    }
+  ]
+}
+

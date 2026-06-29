@@ -1,0 +1,93 @@
+{% load static %}
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>智兵决策系统</title>
+  <link rel="stylesheet" href="{% static 'command_ui/vendor/leaflet.css' %}">
+  <link rel="stylesheet" href="{% static 'command_ui/styles.css' %}">
+</head>
+<body>
+  <div id="top-title-bar">
+    <div class="brand-block">
+      <div class="brand-mark">ZB</div>
+      <div>
+        <div class="title-text">智兵决策系统</div>
+        <div class="subtitle-text">2D Tactical Command Demonstrator</div>
+      </div>
+    </div>
+    <div class="status-cluster">
+      <span id="sessionPill">SESSION --</span>
+      <span id="ragPill">RAG READY</span>
+      <span id="transportPill">HTTP ADAPTER</span>
+    </div>
+  </div>
+
+  <div id="hud-top-bar">
+    <div class="hud-section">
+      <span class="hud-label">任务阶段</span><span id="taskState" class="hud-value">PLANNED</span>
+      <span class="hud-separator"></span>
+      <span class="hud-label">候选路径</span><span id="routeCount" class="hud-value">0</span>
+      <span class="hud-separator"></span>
+      <span class="hud-label">选择</span><span id="selectedRoute" class="hud-value">--</span>
+    </div>
+    <div class="hud-controls">
+      <button id="loadDemoBtn" class="hud-btn" type="button">一键部署</button>
+      <button id="resetSessionBtn" class="hud-btn" type="button">重置会话</button>
+    </div>
+  </div>
+
+  <aside id="left-sidebar">
+    <section class="panel-section">
+      <h2>场景部署</h2>
+      <button id="deployDefaultBtn" class="wide-btn" type="button">加载默认围剿场景</button>
+      <div class="hint-line">对象可拖拽，拖拽结果用于可视化演示。</div>
+    </section>
+    <section class="panel-section">
+      <h2>部署工具</h2>
+      <div class="tool-grid">
+        <button class="tool-btn active" type="button" data-tool="friendly">我方班组</button>
+        <button class="tool-btn" type="button" data-tool="enemy">敌方火力点</button>
+        <button class="tool-btn" type="button" data-tool="risk">狙击风险区</button>
+        <button class="tool-btn" type="button" data-tool="target">目标入口</button>
+      </div>
+    </section>
+    <section class="panel-section list-section">
+      <h2>场景对象</h2>
+      <div id="objectList" class="object-list"></div>
+    </section>
+  </aside>
+
+  <main id="map"></main>
+
+  <aside id="right-sidebar">
+    <section class="chat-section">
+      <h2>LLM 指控会话</h2>
+      <div id="chat-messages"></div>
+      <textarea id="commandInput" rows="4" placeholder="输入新要求，例如：不要走大路，大路有狙击风险"></textarea>
+      <div class="command-row">
+        <button id="sendCommandBtn" class="primary-btn" type="button">发送</button>
+      </div>
+    </section>
+
+    <section class="route-section">
+      <h2>候选路径</h2>
+      <div id="routeCandidates"></div>
+    </section>
+
+    <section class="memory-section">
+      <h2>当前约束</h2>
+      <div id="constraintList" class="constraint-list"></div>
+    </section>
+
+    <section class="adapter-section">
+      <h2>Adapter 预览</h2>
+      <pre id="adapterPreview"></pre>
+    </section>
+  </aside>
+
+  <script src="{% static 'command_ui/vendor/leaflet.js' %}"></script>
+  <script src="{% static 'command_ui/app.js' %}"></script>
+</body>
+</html>

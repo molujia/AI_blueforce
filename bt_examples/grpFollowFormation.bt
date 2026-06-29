@@ -1,0 +1,64 @@
+{
+	"treename":"grpFollowFormation",
+	"name":"grpFollowFormation",
+	"id": "576e9348-8e3b-11e8-847a-484d7e9f99d8",
+	"type":"sequence",
+	"subtrees":
+	[
+		{
+			"name":"init",
+			"id":"f59b1be3-1e64-475a-9d5c-24aed3b05027",
+			"type":"scriptAction",
+			"script":
+			[
+				"local units = {}",
+				"local veh = self:GetEntity(0):GetOwnCrewPosition():GetVehicle()",
+				"local isInVeh = veh:Valid()",
+				"if isInVeh then",
+				"    for entity in self:GetEntities() do",
+				"        units[#units + 1] = entity",
+				"    end",
+				"    for i = 1,#units do",
+				"        if units[i]:GetOwnCrewPosition():GetRole() == VehicleRole.Driver then",
+				"            local firstUnit = units[1]",
+				"            units[1] = units[i]",
+				"            units[i] = firstUnit",
+				"            break",
+				"        end",
+				"    end",
+				"    self:SetChildOrder(units)",
+				"end"
+			],
+			"codeType": "Lua"
+		},
+		{
+			"name":"Follow formation",
+			"id":"e07ff684-2b03-4c5c-8a5d-ffa5af8c5a9b",
+			"type":"supervisedParallel",
+			"subtrees":
+			[
+				{
+				    "name": "GrpMoveEnd",
+				    "id": "5773560a-8e3b-11e8-a8ce-484d7e9f99d8",
+				    "type": "messageHandler",
+				    "subject": "GrpMoveEnd",
+				    "handler": 
+				    [
+				    	"CgfControl.CGFGroupInfo.SendToChildren(self,\"GrpMoveEnd\",{})"
+				    ],
+				    "codeType": "Lua"
+				},
+				{
+					"name":"follow",
+					"id": "57735609-8e3b-11e8-a02d-484d7e9f99d8",
+					"type":"followFormation"
+				}
+			]
+		}
+	],
+	"parameters": [],
+	"locals":
+	{
+		"btEnd":"false"
+	}
+}

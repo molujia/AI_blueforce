@@ -1,0 +1,8 @@
+{
+  "model": "gpt-5-nano",
+  "base_url": "",
+  "api_key": "",
+  "proxy_url": "http://127.0.0.1:7897",
+  "timeout_seconds": 20,
+  "retries": 1
+}

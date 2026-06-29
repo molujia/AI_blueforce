@@ -1,0 +1,88 @@
+[
+  {
+    "bt_name": "grpSimpleMoveNoAuto",
+    "btset_path": "CgfControl.btset",
+    "scope": "group",
+    "capabilities": ["group_move", "set_formation", "maintain_formation_direction"],
+    "required_args": [
+      {"name": "moveDest", "type": "coordinate", "description": "destination CoordinateObject"},
+      {"name": "formation", "type": "formation", "description": "formation identifier, size ratio, optional heading"}
+    ],
+    "optional_args": [],
+    "return_codes": ["SUCCESS", "UNREACHABLE"],
+    "safe_update_points": ["end"],
+    "explainable_nodes": [
+      {"node": "Init", "meaning": "reads destination and formation arguments"},
+      {"node": "Set formation", "meaning": "sets group formation before movement"},
+      {"node": "Move", "meaning": "moves the group to the destination"}
+    ],
+    "incompatible_with": [],
+    "phase_available": "MVP",
+    "active": true
+  },
+  {
+    "bt_name": "GrpMove",
+    "btset_path": "CgfControl.btset",
+    "scope": "group",
+    "capabilities": ["group_move", "set_speed", "set_formation", "dispatch_child_follow"],
+    "required_args": [
+      {"name": "movePos", "type": "coordinate", "description": "destination CoordinateObject"},
+      {"name": "speed", "type": "number", "description": "movement speed in meters per second"}
+    ],
+    "optional_args": [
+      {"name": "fmInfoTable", "type": "array", "default": []}
+    ],
+    "return_codes": ["SUCCESS", "UNREACHABLE", "SUBTASK_FAILED", "TIMEOUT"],
+    "safe_update_points": ["end", "upper_waiting_leaf"],
+    "explainable_nodes": [
+      {"node": "BTArg init", "meaning": "reads movePos, speed, and formation parameters"},
+      {"node": "send task to child", "meaning": "dispatches follow-formation tasks to child units"},
+      {"node": "move", "meaning": "executes group movement toward destination"},
+      {"node": "adjust speed", "meaning": "adjusts member speeds based on formation distance"}
+    ],
+    "incompatible_with": [],
+    "phase_available": "MVP",
+    "active": true
+  },
+  {
+    "bt_name": "GrpMove2",
+    "btset_path": "CgfControl.btset",
+    "scope": "group",
+    "capabilities": ["group_move", "individual_destinations", "set_speed"],
+    "required_args": [
+      {"name": "movePosArr", "type": "coordinate_list", "description": "per-member CoordinateObject destinations"},
+      {"name": "speed", "type": "number", "description": "movement speed"},
+      {"name": "dir", "type": "number", "description": "facing direction in degrees"}
+    ],
+    "optional_args": [],
+    "return_codes": ["SUCCESS", "SUBTASK_FAILED"],
+    "safe_update_points": ["SubTaskEnd"],
+    "explainable_nodes": [
+      {"node": "BTArg init", "meaning": "reads per-unit destinations, speed, and facing direction"},
+      {"node": "send task to child", "meaning": "dispatches movement tasks to each member"},
+      {"node": "waitUnitil", "meaning": "waits until all child tasks report SubTaskEnd"}
+    ],
+    "incompatible_with": [],
+    "phase_available": "MVP",
+    "active": true
+  },
+  {
+    "bt_name": "grpFollowFormation",
+    "btset_path": "CgfControl.btset",
+    "scope": "group",
+    "capabilities": ["formation_follow"],
+    "required_args": [],
+    "optional_args": [],
+    "return_codes": ["GrpMoveEnd"],
+    "safe_update_points": ["message_driven"],
+    "explainable_nodes": [
+      {"node": "init", "meaning": "orders units for vehicle-aware formation following"},
+      {"node": "GrpMoveEnd", "meaning": "propagates group movement completion to children"},
+      {"node": "follow", "meaning": "keeps formation while following the active group movement"}
+    ],
+    "incompatible_with": [],
+    "phase_available": "MVP",
+    "active": true
+  }
+]
+

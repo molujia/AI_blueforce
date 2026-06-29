@@ -1,0 +1,194 @@
+{
+  "treename": "GrpMove2",
+  "name": "GrpMove2",
+  "id": "cc810e1c-d11a-11e8-85e8-f48e38887443",
+  "type": "supervisedParallel",
+  "codeType": "lua",
+  "subtrees":
+  [
+    {
+      "name": "main thread",
+      "id": "acbb7a4c-d11b-11e8-9d9f-f48e38887443",
+      "type": "sequence",
+      "codeType": "lua",
+      "subtrees":
+      [
+        {
+          "name": "BTArg init",
+          "id": "b16516a6-d11b-11e8-bca5-f48e38887443",
+          "type": "scriptAction",
+          "script":
+          [
+            "if arg.BTArg.speed ~= nil then",
+              "loc.speed = arg.BTArg.speed",
+            "else",
+              "loc.speed = 4",
+            "end",
+            "if arg.BTArg.movePosArr ~= nil then",
+              "loc.movePosArr = arg.BTArg.movePosArr",
+            "end",
+            "if arg.BTArg.dir ~= nil then",
+              "loc.dir = arg.BTArg.dir",
+            "end"
+          ],
+          "codeType": "lua"
+        },
+        {
+          "name": "exe selector",
+          "id": "b632dd5a-d11b-11e8-a045-f48e38887443",
+          "type": "selector",
+          "active": false,
+          "subtrees":
+          [
+            {
+              "name": "exe sequence",
+              "id": "bcf54f70-d11b-11e8-929d-f48e38887443",
+              "type": "sequence",
+              "subtrees":
+              [
+                {
+                  "name": "send task to child",
+                  "id": "089eb44c-d11c-11e8-8742-f48e38887443",
+                  "type": "scriptAction",
+                  "script":
+                  [
+                    "if self:GetChildGroupCount() == 0 then",
+                      "local entities = CgfControl.CGFGroupInfo.GetEntities(self)",
+                      "for i=1, #entities do",
+                        "self:SendMessage(entities[i], \"DoNewTaskRequest\", {task = {object=entities[i], priority=1, BTSet=\"CgfControl\", BT=\"UnitGeneralMove\", BTArg={sender=self, movePosArr={loc.movePosArr[i]}, dir=loc.dir}}})",
+                        "loc.iTaskCount = loc.iTaskCount + 1",
+                      "end",
+                    "end"
+                  ],
+                  "codeType": "lua"
+                },
+                {
+                  "name": "waitUnitil",
+                  "id": "0dee5714-d11c-11e8-856f-f48e38887443",
+                  "type": "waitUntil",
+                  "condition": "return loc.iTaskCount == loc.iTaskEndCount",
+                  "codeType": "lua"
+                },
+                {
+                  "name": "send task end to parentGroup",
+                  "id": "16cd2164-d11c-11e8-bf90-f48e38887443",
+                  "type": "scriptAction",
+                  "script":
+                  [
+                    "if self:GetParentGroup():Valid() then",
+                      "self:SendMessage(self:GetParentGroup(), \"SubTaskEnd\", {})",
+                    "end"
+                  ],
+                  "codeType": "lua"
+                }
+              ],
+              "decorators":
+              [
+                {
+                  "name": "loc.movePosArr ~= nil?",
+                  "id": "1de7edf6-d11c-11e8-9510-f48e38887443",
+                  "type": "scriptCondition",
+                  "script": "return loc.movePosArr ~= nil",
+                  "codeType": "lua"
+                }
+              ]
+            },
+            {
+              "name": "default success",
+              "id": "2431d2e8-d11c-11e8-ae9f-f48e38887443",
+              "type": "success"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "setSpeed?",
+      "id": "300900cc-d11c-11e8-bd69-f48e38887443",
+      "type": "selector",
+      "active": true,
+      "subtrees":
+      [
+        {
+          "name": "setSpeed sequence",
+          "id": "3481c86e-d11c-11e8-84ee-f48e38887443",
+          "type": "sequence",
+          "subtrees":
+          [
+            {
+              "name": "wait",
+              "id": "39705e0a-d11c-11e8-ba20-f48e38887443",
+              "type": "wait",
+              "time": "return 0.5",
+              "codeType": "lua"
+            },
+            {
+              "name": "setSpeed",
+              "id": "42a18f50-d11c-11e8-b6c1-f48e38887443",
+              "type": "scriptAction",
+              "script":
+              [
+                "CgfControl.CGFGroupInfo.SetSpeed(self, loc.speed)",
+                "loc.speed = nil"
+              ],
+              "codeType": "lua"
+            }
+          ],
+          "decorators":
+          [
+            {
+              "name": "setSpeed condition",
+              "id": "4e0fe7ba-d11c-11e8-bec5-f48e38887443",
+              "type": "scriptCondition",
+              "script": "return loc.speed ~= nil",
+              "codeType": "lua"
+            }
+          ]
+        },
+        {
+          "name": "default success",
+          "id": "65aad00c-c2ca-11e8-80d4-f48e38887443",
+          "type": "success"
+        }
+      ]
+    },
+    {
+      "name": "recive speed",
+      "id": "5489de10-d11c-11e8-959e-f48e38887443",
+      "subject": "speed",
+      "type": "messageHandler",
+      "handler": 
+      [
+        "loc.speed = msg.value.speed"
+      ],
+      "codeType": "lua"
+    },
+    {
+      "name": "receive msg of taskEnd",
+      "id": "598237d2-d11c-11e8-86e2-f48e38887443",
+      "subject": "SubTaskEnd",
+      "type": "messageHandler",
+      "handler":
+      [
+        "loc.iTaskEndCount = loc.iTaskEndCount + 1"
+      ],
+      "codeType": "lua"
+    }
+  ],
+  "parameters":
+  [
+    {
+      "name":"BTArg",
+      "isOptional":"true",
+      "defaultValue": "return {}"
+    }
+  ],
+  "locals": 
+  {
+    "movePosArr": "return nil",
+    "speed": "return nil",
+    "dir": "return 0",
+    "iTaskCount": "return 0",
+    "iTaskEndCount": "return 0"
+  }
+}

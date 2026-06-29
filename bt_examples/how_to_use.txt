@@ -1,0 +1,7 @@
+below is a real use case
+
+_status = loadBTSet "E:\vms5\vas5\mycomponentsControlAISample1\behaviors\sampleMove.btset":72 (group p_4) setBT ["sampleMove","group"];
+(group p_4) setBBVariable ["movementSpeed",10]; #设置速度
+p_4 setBT ["sampleMove","soldier"]; 
+_msgValue = ["NeworderRequest",["orderType","MoveTo",destination",[40.2409585,116.1173974,120.0]]]; 
+(group p_4) receiveMessage_msgValue;

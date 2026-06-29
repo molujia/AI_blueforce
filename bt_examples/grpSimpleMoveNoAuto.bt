@@ -1,0 +1,109 @@
+{
+	"treename":"grpSimpleMoveNoAuto",
+	"name":"grpSimpleMoveNoAuto",
+	"id": "93988702-bbcb-11e8-8224-484d7e9f99d8",
+	"type":"sequence",
+	"subtrees":
+	[
+		{
+			"name":"Init",
+			"id": "93992346-bbcb-11e8-bd7e-484d7e9f99d8",
+			"type":"scriptAction",
+			"script":
+			[
+				"loc.moveDest = arg.BTArg.moveDest",
+				"loc.formationName = \"Formation_Triangle\"",
+				"loc.formationRatio = 5",
+				"if arg.BTArg.formation ~= nil then",
+				"    loc.formationName = arg.BTArg.formation[1]",
+				"    loc.formationRatio = arg.BTArg.formation[2]",
+				"    if arg.BTArg.formation[3] ~= nil then",
+				"        loc.formationDir = arg.BTArg.formation[3]",
+				"    end",
+				"end"
+			]
+		},
+		{
+			"name":"Set formation",
+			"id": "9399bf88-bbcb-11e8-bb91-484d7e9f99d8",
+			"type":"setFormation",
+			"formation":"return loc.formationName"
+		},
+		{
+			"name":"Set formation ratio",
+			"id": "939a0da8-bbcb-11e8-9cbc-484d7e9f99d8",
+			"type":"scriptAction",
+			"script":
+			[
+				"self:SetFormationSizeRatio(loc.formationRatio)"
+			]
+		},
+		{
+			"name":"Do move",
+			"id": "939a34b8-bbcb-11e8-977e-484d7e9f99d8",
+			"type":"supervisedParallel",
+			"subtrees":
+			[
+				{
+					"name":"Move",
+					"id": "939b6d3e-bbcb-11e8-b5a6-484d7e9f99d8",
+					"type":"move",
+					"position":"return loc.moveDest"
+				},
+				{
+					"name":"Set formation dir",
+					"id": "939b944c-bbcb-11e8-af36-484d7e9f99d8",
+					"type":"sequence",
+					"subtrees":
+					[
+						{
+							"name":"Set dir",
+							"id": "939bbb5e-bbcb-11e8-b667-484d7e9f99d8",
+							"type":"scriptAction",
+							"script":
+							[
+								"local leader = self:GetLeader()",
+								"local fDir = leader:GetHeading()",
+								"if loc.formationDir ~= nil then",
+								"    fDir = loc.formationDir",
+								"end",
+								"self:ReqHeadingAbs(fDir)"
+							]
+						},
+						{
+							"name":"Wait step",
+							"id": "939c0980-bbcb-11e8-a73a-484d7e9f99d8",
+							"type":"wait",
+							"time":"return 2"
+						}
+					]
+				},
+				{
+					"name":"Order change detect",
+					"id": "a42c8a0a-ae05-49c3-a542-b3b49dbcd44a",
+					"type": "reference",
+					"target": ["CgfControl","membersCanMoveDetectAndOrderChange"],
+					"arguments": 
+					{
+						"BTArg":"return {step = 1}"
+					}
+				}
+			]
+		}
+	],
+	"parameters": 
+	[
+		{
+	      "name":"BTArg",
+	      "isOptional":"false",
+	      "defaultValue": "{moveDest = nil,formation = nil}"
+	    }
+	],
+	"locals":
+	{
+		"moveDest":"nil",
+		"formationName":"nil",
+		"formationRatio":"nil",
+		"formationDir":"nil"
+	}
+}

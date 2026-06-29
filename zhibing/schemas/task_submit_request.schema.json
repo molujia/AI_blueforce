@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "task_submit_request.schema.json",
+  "title": "TaskSubmitRequest",
+  "type": "object",
+  "required": ["request_id", "session_id", "actor", "task", "timeout_policy", "callback_policy"],
+  "properties": {
+    "request_id": {"type": "string"},
+    "session_id": {"type": "string"},
+    "scenario_id": {"type": "string"},
+    "actor": {
+      "type": "object",
+      "required": ["type", "id"],
+      "properties": {
+        "type": {"enum": ["group", "soldier"]},
+        "id": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "task": {
+      "type": "object",
+      "required": ["task_type", "btset_path", "bt_name", "bt_scope", "bt_args"],
+      "properties": {
+        "task_type": {"type": "string"},
+        "btset_path": {"type": "string"},
+        "bt_name": {"type": "string"},
+        "bt_scope": {"enum": ["group", "soldier"]},
+        "bt_args": {"type": "object"}
+      },
+      "additionalProperties": false
+    },
+    "timeout_policy": {
+      "type": "object",
+      "required": ["expected_seconds", "hard_timeout_seconds", "stall_timeout_seconds"],
+      "properties": {
+        "expected_seconds": {"type": "number"},
+        "hard_timeout_seconds": {"type": "number"},
+        "stall_timeout_seconds": {"type": "number"}
+      },
+      "additionalProperties": false
+    },
+    "callback_policy": {
+      "type": "object",
+      "required": ["return_on"],
+      "properties": {
+        "return_on": {
+          "type": "array",
+          "items": {"enum": ["SUCCESS", "UNREACHABLE", "SUBTASK_FAILED", "PARAM_ERROR", "BT_LOAD_ERROR", "ACTOR_NOT_FOUND", "WAIT_UPPER", "TIMEOUT"]}
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
+

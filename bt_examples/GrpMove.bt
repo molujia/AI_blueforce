@@ -1,0 +1,271 @@
+{
+  "treename": "GrpMove",
+  "name": "GrpMove",
+  "id": "3c8138c6-c250-11e8-9fc5-f48e38887443",
+  "type": "supervisedParallel",
+  "codeType": "lua",
+  "subtrees":
+  [
+    {
+      "name": "main thread",
+      "id": "42cea036-c250-11e8-82b3-f48e38887443",
+      "type": "sequence",
+      "codeType": "lua",
+      "subtrees":
+      [
+        {
+          "name": "BTArg init",
+          "id": "5030e0b0-c250-11e8-8980-f48e38887443",
+          "type": "scriptAction",
+          "script":
+          [
+            "if CgfControl.CGFGroupInfo.IsAllInSameVeh(self) then",
+              "loc.bFmSpeedSet = false",
+            "end",
+            "if arg.BTArg.fmInfoTable ~= nil then",
+              "loc.fmInfoTable = arg.BTArg.fmInfoTable",
+            "end",
+            "if arg.BTArg.speed ~= nil then",
+              "loc.relSpeed = arg.BTArg.speed",
+              "loc.speed = loc.relSpeed",
+            "end",
+            "if arg.BTArg.movePos ~= nil then",
+              "loc.movePos = arg.BTArg.movePos",
+            "end"
+          ],
+          "codeType": "lua"
+        },
+        {
+          "name": "exe selector",
+          "id": "5efaccc0-c250-11e8-b30a-f48e38887443",
+          "type": "selector",
+          "active": false,
+          "subtrees":
+          [
+            {
+              "name": "exe sequence",
+              "id": "718180b0-c250-11e8-a612-f48e38887443",
+              "type": "sequence",
+              "subtrees":
+              [
+                {
+                  "name": "setFormation?",
+                  "id": "cbffce48-c250-11e8-87e3-f48e38887443",
+                  "type": "selector",
+                  "active": false,
+                  "subtrees":
+                  [
+                    {
+                      "name":"reference GrpFormationSet",
+                      "id": "7a4373c6-c250-11e8-a349-f48e38887443",
+                      "type": "reference",
+                      "target": ["CgfControl", "GrpFormationSet"],
+                      "arguments": 
+                      {
+                        "BTArg":"return loc.fmInfoTable[1]"
+                      },
+                      "codeType": "lua",
+                      "decorators":
+                      [
+                        {
+                          "name": "setFormation condition",
+                          "id": "eb67d100-c250-11e8-a88c-f48e38887443",
+                          "type": "scriptCondition",
+                          "script": "return #loc.fmInfoTable>0",
+                          "codeType": "lua"
+                        }
+                      ]
+                    },
+                    {
+                      "name": "default success",
+                      "id": "d8fedeae-c250-11e8-829b-f48e38887443",
+                      "type": "success"
+                    }
+                  ]
+                },
+                {
+                  "name": "send task to child",
+                  "id": "4e7c11dc-c2bc-11e8-bd0a-f48e38887443",
+                  "type": "scriptAction",
+                  "script":
+                  [
+                    "if self:GetChildGroupCount() == 0 then",
+                      "for entity in self:GetEntities() do",
+                        "self:SendMessage(entity, \"DoNewTaskRequest\", {task = {object=entity, priority=1, BTSet=\"CgfControl\", BT=\"unitFollowFormation2\", BTArg={}}})",
+                      "end",
+                    "else",
+                      "local tmpFmInfoTable = {}",
+                      "for i=2, #loc.fmInfoTable do",
+                        "tmpFmInfoTable[#tmpFmInfoTable+1]=loc.fmInfoTable[i]",
+                      "end",
+                      "for grp in self:GetChildGroups() do",
+                        "self:SendMessage(grp, \"DoNewTaskRequest\", {task = {object=grp, priority=1, BTSet=\"CgfControl\", BT=\"GroupFollowFormation\", BTArg={fmInfoTable=tmpFmInfoTable}}})",
+                      "end",
+                    "end"
+                  ],
+                  "codeType": "lua"
+                },
+                {
+                  "name": "move",
+                  "id": "af47e124-c2be-11e8-bd18-f48e38887443",
+                  "type": "move",
+                  "position": "return loc.movePos",
+                  "codeType": "lua"
+                },
+                {
+                  "name": "send task end to parentGroup and childs",
+                  "id": "323088fa-c394-11e8-9c52-f48e38887443",
+                  "type": "scriptAction",
+                  "script":
+                  [
+                    "if self:GetParentGroup():Valid() then",
+                      "self:SendMessage(self:GetParentGroup(), \"SubTaskEnd\", {})",
+                    "end",
+                    "if self:GetChildGroupCount() == 0 then",
+                      "for entity in self:GetEntities() do",
+                        "self:SendMessage(entity, \"SubTaskEnd\", {})",
+                      "end",
+                    "else",
+                      "for grp in self:GetChildGroups() do",
+                        "self:SendMessage(grp, \"SubTaskEnd\", {})",
+                      "end",
+                    "end"
+                  ],
+                  "codeType": "lua"
+                }
+              ],
+              "decorators":
+              [
+                {
+                  "name": "loc.movePos ~= nil?",
+                  "id": "7bd842fe-c1f5-11e8-8116-f48e38887443",
+                  "type": "scriptCondition",
+                  "script": "return loc.movePos ~= nil and loc.relSpeed ~= nil",
+                  "codeType": "lua"
+                }
+              ]
+            },
+            {
+              "name": "default success",
+              "id": "80f7ad52-c1f5-11e8-bc31-f48e38887443",
+              "type": "success"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "adjust speed sequence",
+      "id": "27a5bed8-c3e2-11e8-a8ca-f48e38887443",
+      "type": "sequence",
+      "subtrees":
+      [
+        {
+          "name": "wait",
+          "id": "774c02c8-c3e2-11e8-9d7b-f48e38887443",
+          "type": "wait",
+          "time": "return 1",
+          "codeType": "lua"
+        },
+        {
+          "name":"adjust speed",
+          "id": "7b8d6d54-c3b0-11e8-bb1b-f48e38887443",
+          "type": "scriptAction",
+          "script": 
+          [
+            "if loc.bFmSpeedSet then",
+              "if loc.relSpeed ~= nil then",
+                "local maxDst = CgfControl.CGFGroupInfo.GetMaxDistanceToFormation(self)",
+                "if maxDst < 0.5 then",
+                  "CgfControl.CGFGroupInfo.SetSpeed(self, loc.relSpeed)",
+                "elseif maxDst>1.5 then",
+                  "CgfControl.CGFGroupInfo.SetMemberSpeed_FmDst(self, loc.relSpeed)",
+                "end",
+              "end",
+            "end"
+          ],
+          "codeType": "lua"
+        }
+      ]
+    },
+    {
+      "name": "setSpeed?",
+      "id": "5d2e7280-c2ca-11e8-9749-f48e38887443",
+      "type": "selector",
+      "active": true,
+      "subtrees":
+      [
+        {
+          "name": "setSpeed sequence",
+          "id": "000b817a-c2cb-11e8-8ad4-f48e38887443",
+          "type": "sequence",
+          "subtrees":
+          [
+            {
+              "name": "wait",
+              "id": "b6342a0a-c2c3-11e8-bce8-f48e38887443",
+              "type": "wait",
+              "time": "return 0.5",
+              "codeType": "lua"
+            },
+            {
+              "name": "setSpeed",
+              "id": "76ec7b70-c2c4-11e8-99b2-f48e38887443",
+              "type": "scriptAction",
+              "script":
+              [
+                "CgfControl.CGFGroupInfo.SetSpeed(self, loc.speed)",
+                "loc.speed = nil"
+              ],
+              "codeType": "lua"
+            }
+          ],
+          "decorators":
+          [
+            {
+              "name": "setSpeed condition",
+              "id": "72831e06-c2ca-11e8-8770-f48e38887443",
+              "type": "scriptCondition",
+              "script": "return loc.speed ~= nil",
+              "codeType": "lua"
+            }
+          ]
+        },
+        {
+          "name": "default success",
+          "id": "65aad00c-c2ca-11e8-80d4-f48e38887443",
+          "type": "success"
+        }
+      ]
+    },
+    {
+      "name": "recive speed",
+      "id": "2c2340ac-c2c4-11e8-9f64-f48e38887443",
+      "subject": "speed",
+      "type": "messageHandler",
+      "handler": 
+      [
+        "loc.relSpeed = msg.value.speed",
+        "loc.speed = loc.relSpeed"
+      ],
+      "codeType": "lua"
+    } 
+  ],
+  "parameters":
+  [
+    {
+      "name":"BTArg",
+      "isOptional":"true",
+      "defaultValue": "return {}"
+    }
+  ],
+  "locals": 
+  {
+    "fmInfoTable": "return {}",
+    "movePos": "return nil",
+    "speed": "return nil",
+    "relSpeed": "return nil",
+    "curSpeed": "return 0",
+    "bFmSpeedSet": "return true"
+  }
+}

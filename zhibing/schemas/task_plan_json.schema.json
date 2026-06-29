@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "task_plan_json.schema.json",
+  "title": "TaskPlanJSON",
+  "type": "object",
+  "required": ["mission_id", "plan"],
+  "properties": {
+    "mission_id": {"type": "string"},
+    "plan": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["step_id", "task_type", "actor", "bt", "args", "timeout_policy"],
+        "properties": {
+          "step_id": {"type": "string"},
+          "task_type": {"type": "string"},
+          "actor": {"type": "object"},
+          "depends_on": {"type": "array", "items": {"type": "string"}},
+          "bt": {
+            "type": "object",
+            "required": ["btset_path", "bt_name"],
+            "properties": {
+              "btset_path": {"type": "string"},
+              "bt_name": {"type": "string"}
+            },
+            "additionalProperties": false
+          },
+          "args": {"type": "object"},
+          "timeout_policy": {"type": "object"}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
+

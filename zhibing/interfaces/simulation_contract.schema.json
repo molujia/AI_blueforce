@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LowerSimulationContract",
+  "definitions": {
+    "SubmitSQFPlan": {
+      "type": "object",
+      "required": ["task_id", "request", "sqf_statements"],
+      "properties": {
+        "task_id": {"type": "string"},
+        "request": {"type": "object"},
+        "sqf_statements": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": true
+    },
+    "StatusQueryRequest": {
+      "type": "object",
+      "required": ["task_id"],
+      "properties": {
+        "request_id": {"type": "string"},
+        "session_id": {"type": "string"},
+        "task_id": {"type": "string"},
+        "query_fields": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": true
+    },
+    "SocketEnvelope": {
+      "type": "object",
+      "required": ["message_id", "message_type", "payload"],
+      "properties": {
+        "message_id": {"type": "string"},
+        "message_type": {"enum": ["TASK_SUBMIT", "TASK_QUERY", "TASK_STATUS", "ACK", "ERROR"]},
+        "payload": {"type": "object"}
+      },
+      "additionalProperties": false
+    }
+  }
+}

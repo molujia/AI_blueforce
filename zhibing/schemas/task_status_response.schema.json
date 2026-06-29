@@ -1,0 +1,78 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "task_status_response.schema.json",
+  "title": "TaskStatusResponse",
+  "type": "object",
+  "required": ["session_id", "task_id", "status"],
+  "definitions": {
+    "CoordinateObject": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["frame", "lat", "lon", "alt"],
+          "properties": {
+            "frame": {"const": "WGS84_LATLON_ALT"},
+            "lat": {"type": "number"},
+            "lon": {"type": "number"},
+            "alt": {"type": "number"}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["frame", "x", "y", "z"],
+          "properties": {
+            "frame": {"const": "VBS_LOCAL_XYZ"},
+            "x": {"type": "number"},
+            "y": {"type": "number"},
+            "z": {"type": "number"}
+          },
+          "additionalProperties": false
+        }
+      ]
+    }
+  },
+  "properties": {
+    "session_id": {"type": "string"},
+    "task_id": {"type": "string"},
+    "status": {"enum": ["CREATED", "DISPATCHED", "ACKED", "RUNNING", "WAIT_UPPER", "SUCCEEDED", "FAILED", "TIMEOUT", "ABORTED"]},
+    "actor": {
+      "type": "object",
+      "properties": {
+        "type": {"enum": ["group", "soldier"]},
+        "id": {"type": "string"},
+        "position": {"$ref": "#/definitions/CoordinateObject"}
+      }
+    },
+    "bt_runtime": {
+      "type": "object",
+      "properties": {
+        "bt_name": {"type": "string"},
+        "active_node": {"type": "string"},
+        "node_path": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "progress": {
+      "type": "object",
+      "properties": {
+        "distance_to_goal_m": {"type": "number"},
+        "elapsed_seconds": {"type": "number"},
+        "estimated_remaining_seconds": {"type": "number"},
+        "progress_rate_mps": {"type": "number"}
+      }
+    },
+    "return_code": {"type": ["string", "null"]},
+    "error": {
+      "type": ["object", "null"],
+      "properties": {
+        "class": {"type": "string"},
+        "message": {"type": "string"},
+        "position": {"$ref": "#/definitions/CoordinateObject"},
+        "blocked_segment": {"type": "string"}
+      }
+    },
+    "suggested_action": {"enum": ["REPLAN_ROUTE", "REASSIGN_TASK", "REQUEST_HUMAN", "HOLD_POSITION", null]}
+  },
+  "additionalProperties": false
+}
+

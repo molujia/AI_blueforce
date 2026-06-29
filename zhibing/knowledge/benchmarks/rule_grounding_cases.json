@@ -1,0 +1,6 @@
+[
+  {"query": "should a route avoid enemy fire", "expected_keyword": "Avoid"},
+  {"query": "building entry preparation", "expected_keyword": "assessment"},
+  {"query": "sudden contact human review", "expected_keyword": "local"},
+  {"query": "encirclement target building", "expected_keyword": "building"}
+]

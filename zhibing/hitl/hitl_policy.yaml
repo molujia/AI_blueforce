@@ -1,0 +1,37 @@
+﻿nodes:
+  RULE_CONFLICT_CHECK:
+    hitl_allowed: true
+    require_hitl: true
+    allow_emergency_skip: false
+  ENTER_DANGER_ZONE_CHECK:
+    hitl_allowed: true
+    require_hitl: false
+    allow_emergency_skip: false
+  BUILDING_ENTRY_PREP_CHECK:
+    hitl_allowed: true
+    require_hitl: false
+    allow_emergency_skip: false
+  ENCIRCLEMENT_PREP_CHECK:
+    hitl_allowed: true
+    require_hitl: false
+    allow_emergency_skip: false
+  FIRE_OR_ATTACK_AUTHORIZATION:
+    hitl_allowed: true
+    require_hitl: true
+    allow_emergency_skip: false
+  REPLAN_FAIL_GATE:
+    hitl_allowed: true
+    require_hitl: true
+    allow_emergency_skip: false
+  STATUS_POLL:
+    hitl_allowed: false
+    require_hitl: false
+    allow_emergency_skip: true
+  EMERGENCY_CONTACT:
+    hitl_allowed: false
+    require_hitl: false
+    allow_emergency_skip: true
+  LOCAL_AVOIDANCE:
+    hitl_allowed: false
+    require_hitl: false
+    allow_emergency_skip: true

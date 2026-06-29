@@ -1,0 +1,6 @@
+{
+  "phase": "V2",
+  "status": "reserved",
+  "note": "BT node mapping is intentionally not implemented during PHASE_MVP."
+}
+

@@ -1,0 +1,75 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "intent_json.schema.json",
+  "title": "IntentJSON",
+  "type": "object",
+  "required": ["intent", "actors", "constraints"],
+  "definitions": {
+    "CoordinateObject": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["frame", "lat", "lon", "alt"],
+          "properties": {
+            "frame": {"const": "WGS84_LATLON_ALT"},
+            "lat": {"type": "number"},
+            "lon": {"type": "number"},
+            "alt": {"type": "number"}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["frame", "x", "y", "z"],
+          "properties": {
+            "frame": {"const": "VBS_LOCAL_XYZ"},
+            "x": {"type": "number"},
+            "y": {"type": "number"},
+            "z": {"type": "number"}
+          },
+          "additionalProperties": false
+        }
+      ]
+    }
+  },
+  "properties": {
+    "intent": {"type": "string"},
+    "actors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "id"],
+        "properties": {
+          "type": {"enum": ["group", "soldier"]},
+          "id": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "destination": {
+      "type": "object",
+      "properties": {
+        "type": {"enum": ["absolute", "relative_direction", "entity_ref"]},
+        "coord": {"$ref": "#/definitions/CoordinateObject"},
+        "direction": {"enum": ["north", "south", "east", "west", "northeast", "northwest", "southeast", "southwest"]},
+        "distance_m": {"type": "number"},
+        "entity_id": {"type": "string"},
+        "target_object": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "movement_mode": {"type": "string"},
+    "post_action": {"type": "string"},
+    "constraints": {
+      "type": "object",
+      "properties": {
+        "avoid_enemy": {"type": "boolean"},
+        "maintain_formation": {"type": "boolean"},
+        "allow_replan": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
+

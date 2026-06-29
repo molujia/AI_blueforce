@@ -1,0 +1,63 @@
+providers:
+  openai:
+    provider_type: openai
+    api: responses
+    base_url: https://api.openai.com/v1
+    api_key_secret: openai_api_key
+    api_key_env: OPENAI_API_KEY
+    tools: []
+
+  openai_chat:
+    provider_type: openai
+    api: chat_completions
+    base_url: https://api.openai.com/v1
+    api_key_secret: openai_api_key
+    api_key_env: OPENAI_API_KEY
+    tools: []
+
+  volcengine_ark:
+    provider_type: openai_compatible
+    api: responses
+    base_url: https://ark.cn-beijing.volces.com/api/v3
+    api_key_secret: ark_api_key
+    api_key_env: ARK_API_KEY
+    tools: []
+
+seed_models:
+  openai_text:
+    provider: openai
+    model_alias: openai_text
+    model_name: gpt-4o-mini
+    supports_vision: true
+    max_output_tokens: 2000
+
+  openai_multimodal:
+    provider: openai
+    model_alias: openai_multimodal
+    model_name: gpt-4o
+    supports_vision: true
+    max_output_tokens: 3000
+
+  volc_text:
+    provider: volcengine_ark
+    model_alias: volc_text
+    model_name: deepseek-v3-2-251201
+    supports_vision: false
+    max_output_tokens: 3000
+    tools: []
+
+  volc_multimodal:
+    provider: volcengine_ark
+    model_alias: volc_multimodal
+    model_name: ep-20260615114505-247zc
+    supports_vision: true
+    max_output_tokens: 3000
+    tools: []
+
+  volc_doubao_vision:
+    provider: volcengine_ark
+    model_alias: volc_doubao_vision
+    model_name: doubao-seed-2-0-lite-260215
+    supports_vision: true
+    max_output_tokens: 2000
+    tools: []

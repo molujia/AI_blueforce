@@ -1,0 +1,29 @@
+tasks:
+  triage_extract:
+    seed_model: volc_text
+    temperature: 0
+    max_output_tokens: 800
+    response_format: json_object
+
+  sop_workflow_analysis:
+    seed_model: volc_text
+    temperature: 0
+    max_output_tokens: 1600
+    response_format: json_object
+
+  reply_generation:
+    seed_model: volc_multimodal
+    temperature: 0.2
+    max_output_tokens: 2000
+    response_format: json_object
+
+  vision_image:
+    seed_model: volc_doubao_vision
+    temperature: 0
+    max_output_tokens: 700
+
+  reply_validation:
+    seed_model: volc_text
+    temperature: 0
+    max_output_tokens: 1000
+    response_format: json_object

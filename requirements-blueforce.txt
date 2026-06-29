@@ -1,0 +1,33 @@
+﻿# 智兵决策系统迁移依赖说明
+#
+# 来源：blueforce conda 环境 + 当前项目实际导入链。
+# 目标：只保留当前智兵系统运行、Web 演示、GraphRAG 可用性入口、LLM 调用所需的 Python 包，
+# 不迁移 blueforce 中与本项目无关的大包，例如 torch、numpy、scikit-learn、pygame。
+#
+# 推荐安装方式：
+#   conda create -n zhibing python=3.12 -y
+#   conda activate zhibing
+#   pip install -r requirements-blueforce.txt
+#
+# 说明：
+# - Python 标准库不需要写入本文件。
+# - 单元测试使用 unittest，不需要 pytest。
+# - Django 的传递依赖包括 asgiref、sqlparse、tzdata，pip 会自动安装。
+# - OpenAI SDK 的传递依赖包括 httpx、pydantic、anyio、tqdm 等，pip 会自动安装。
+# - graphrag 不默认加入基础依赖；官方 quickstart 会安装并触发 LLM 调用，执行前需要单独确认网络、代理、模型和成本。
+
+# Web 可视化中间层必需：用于 zhibing/web 的 Django 服务。
+Django==6.0.6
+
+# HITL 策略文件、配置文件和 llm_call_extract 配置读取需要。
+PyYAML==6.0.3
+
+# LLM 调用链路需要：llm_migration_client.py 与 llm_call_extract/llm_client.py 使用 OpenAI-compatible API。
+openai==2.32.0
+
+# GraphRAG 本地 PDF/DOCX 可用性验证需要：用于吸收 test_files 中的地下作战.docx 和 ARN19656_ATP.pdf。
+python-docx
+pypdf
+
+# blueforce 中与当前智兵系统无直接关系、迁移时不建议写入的包：
+# torch、torchaudio、torchvision、numpy、scipy、scikit-learn、pygame、pillow、networkx、sympy、joblib、Jinja2。
