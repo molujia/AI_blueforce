@@ -4,12 +4,8 @@ __pycache__/
 *.egg-info/
 dist/
 
-# Large tile archive (784MB - exceeds GitHub 100MB limit)
+# Large satalite archive
 *.zip
-
-# Tile PNGs (too large for GitHub, ~750MB total)
-zhibing/web/zhibing_web/tile/*.png
-zhibing/web/zhibing_web/tile/**/*.png
 
 # IDE
 .vscode/
